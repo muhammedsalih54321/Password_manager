@@ -1,13 +1,9 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:password_manager/Components/Password_Container.dart';
-import 'package:password_manager/Components/Toast_message.dart';
 import 'package:password_manager/Components/category_container.dart';
-import 'package:password_manager/Components/generate_password.dart';
 import 'package:password_manager/Provider/Model_class.dart';
 import 'package:password_manager/Ui/Home/Details_screen.dart';
 
@@ -27,122 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     passwordBox = Hive.box<PasswordEntry>('passwordBox');
   }
 
-  final generatepasswords = TextEditingController();
-  Future<void> _Generatepassword() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Color.fromARGB(255, 40, 40, 40),
-          title: Text(
-            'Generate your Password',
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  controller: generatepasswords,
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    suffixIcon: InkWell(
-                      onTap: () {
-                        FlutterClipboard.copy(generatepasswords.text).then(
-                          (value) {
-                            ToastMessage().toastmessage(message: 'Copied');
-                          },
-                        );
-                      },
-                      child: Icon(
-                        BootstrapIcons.copy,
-                        color: Colors.white,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Color.fromARGB(255, 76, 75, 75),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                        borderSide: BorderSide(color: Color(0xFF262626))),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF262626)),
-                        borderRadius: BorderRadius.circular(8.r)),
-                  ),
-                  validator: (generatepaasword) {
-                    if (generatepaasword!.isEmpty) {
-                      return 'Enter a username!';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(
-                  height: 15.h,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'You want refresh',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 15.w,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        final passwords = generatepassword();
-                        generatepasswords.text = passwords;
-                      },
-                      child: Container(
-                        width: 40.w,
-                        height: 40.h,
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            BootstrapIcons.arrow_clockwise,
-                            color: Color(0xFF0A84FF),
-                            size: 30.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancle',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w500,
-                  )),
-              onPressed: () {
-                Navigator.of(context).pop();
-                generatepasswords.clear();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.white,
             fontSize: 25.sp,
             fontWeight: FontWeight.w500,
-            height: -0.1,
+            height: -0.1.h,
             letterSpacing: -0.40.sp,
           ),
         ),
@@ -166,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.only(right: 10.w),
             child: InkWell(
               onTap: () {
-                _Generatepassword();
+              
               },
               child: Icon(
                 BootstrapIcons.plus_circle,
@@ -198,7 +79,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(
                     width: 250.w,
-                    
                     child: Text(
                       'What do you want to save?',
                       style: GoogleFonts.poppins(
@@ -208,31 +88,33 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.h,),
+                  SizedBox(
+                    height: 16.h,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CategoryContainer(
-                          icon: Icon(
-                            Icons.people_outline,
-                            color: Color(0xFF0A84FF),
-                          ),
-                          title: 'Social',
-                         ),
+                        icon: Icon(
+                          Icons.people_outline,
+                          color: Color(0xFF0A84FF),
+                        ),
+                        title: 'Social',
+                      ),
                       CategoryContainer(
-                          icon: Icon(
-                            BootstrapIcons.app,
-                            color: Color(0xFF0A84FF),
-                          ),
-                          title: 'Apps',
-                         ),
+                        icon: Icon(
+                          BootstrapIcons.app,
+                          color: Color(0xFF0A84FF),
+                        ),
+                        title: 'Apps',
+                      ),
                       CategoryContainer(
-                          icon: Icon(
-                            Icons.wallet,
-                            color: Color(0xFF0A84FF),
-                          ),
-                          title: 'Wallet',
-                          )
+                        icon: Icon(
+                          Icons.wallet,
+                          color: Color(0xFF0A84FF),
+                        ),
+                        title: 'Wallet',
+                      )
                     ],
                   ),
                 ],
@@ -251,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text(
                       'No passwords saved!',
                       style: GoogleFonts.poppins(
-                          color: Colors.white, fontSize: 16),
+                          color: Colors.white, fontSize: 16.sp),
                     ),
                   );
                 }
@@ -259,24 +141,84 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: box.length,
                   itemBuilder: (context, index) {
                     final passwordEntry = box.getAt(index);
-                    return InkWell(
+                    return ListTile(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                DetailsScreen(entry: passwordEntry!),
-                          ),
-                        );
+                         Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              DetailsScreen(entry: passwordEntry!),
+                        ));
                       },
-                      child: PasswordContainer(
-                        image: "${passwordEntry?.appIcon}",
-                        title: passwordEntry?.appName ?? '',
-                        subtitle: passwordEntry?.emailPhone ?? '', 
-                        icon: '',
-                        
-                      ),
-                    );
+                        leading: Container(
+                          width: 44.w,
+                          height: 44.h,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[
+                                800], // Background color if image fails
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.r),
+                            child: passwordEntry?.appIcon != null &&
+                                    passwordEntry!.appIcon.isNotEmpty
+                                ? Image.network(
+                                    passwordEntry.appIcon,
+                                    fit: BoxFit
+                                        .cover, // Ensures the image fills the container properly
+                                    errorBuilder:
+                                        (context, error, stackTrace) {
+                                      return Center(
+                                        child: Text(
+                                          passwordEntry.appName.isNotEmpty
+                                              ? passwordEntry.appName[0]
+                                                  .toUpperCase()
+                                              : '?',
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.white,
+                                            fontSize: 20.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Center(
+                                    child: Text(
+                                      passwordEntry?.appName.isNotEmpty ==
+                                              true
+                                          ? passwordEntry!.appName[0]
+                                              .toUpperCase()
+                                          : '?',
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white,
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        title: Text(
+                          passwordEntry?.appName ?? '',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w600,
+                            height: 1.29.h,
+                            letterSpacing: -0.40.sp,
+                          ),
+                        ),
+                        subtitle: Text(
+                          passwordEntry?.emailPhone ?? '',
+                          style: GoogleFonts.poppins(
+                            color: Color(0x99EBEBF5),
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w400,
+                            height: 1.33.h,
+                            letterSpacing: -0.40.sp,
+                          ),
+                        ));
                   },
                 );
               },

@@ -39,7 +39,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
     updatedpassword.dispose();
     super.dispose();
   }
-   Future<void> deleteEntry(BuildContext context, int? entryKey) async {
+
+  Future<void> deleteEntry(BuildContext context, int? entryKey) async {
     if (entryKey == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error: Entry key is null!")),
@@ -47,13 +48,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
       return;
     }
 
-    var passwordProvider = Provider.of<PasswordProvider>(context, listen: false);
+    var passwordProvider =
+        Provider.of<PasswordProvider>(context, listen: false);
     var box = Hive.box<PasswordEntry>(passwordBoxName);
 
     await box.delete(entryKey);
     passwordProvider.deletePassword(entryKey);
 
-   //
+    //
 
     Navigator.pop(context);
   }
@@ -129,7 +131,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         borderSide: const BorderSide(color: Color(0xFF262626))),
                     focusedBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Color(0xFF262626)),
-                        borderRadius: BorderRadius.circular(8.r)),
+                        borderRadius: BorderRadius.circular(10.r)),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -226,7 +228,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
- 
     return Scaffold(
       backgroundColor: Color(0x5B787880),
       body: Padding(
@@ -258,7 +259,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w600,
                         height: 1.29.h,
-                        letterSpacing: -0.40,
+                        letterSpacing: -0.40.sp,
                       ),
                     ),
                     InkWell(
@@ -273,7 +274,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w500,
-                              
                                 letterSpacing: -0.40.sp,
                               ),
                             )),
@@ -289,7 +289,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           fontSize: 17.sp,
                           fontWeight: FontWeight.w600,
                           height: 1.29.h,
-                          letterSpacing: -0.40,
+                          letterSpacing: -0.40.sp,
                         ),
                       ),
                     ),
@@ -299,16 +299,33 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   height: 60.h,
                 ),
                 Center(
-                  child: Container(
-                    width: 80.w,
-                    height: 80.h,
-                    decoration: ShapeDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(widget.entry.appIcon.toString()),
-                        fit: BoxFit.fill,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(21.82.r),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(21.82.r),
+                    child: Container(
+                      width: 80.w,
+                      height: 80.h,
+                      child: Image.network(
+                        widget.entry.appIcon.toString(),
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          // If the image fails to load, display the first letter of the app name
+                          return ClipRRect(
+                              borderRadius: BorderRadius.circular(21.82.r),
+                              child: Container(
+                                color: Colors.white,
+                                width: 80.w,
+                                height: 80.h,
+                                child: Center(
+                                  child: Text(
+                                    widget.entry.appName[0]
+                                        .toUpperCase(), // First letter of app name
+                                    style: TextStyle(
+                                        fontSize: 24.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ));
+                        },
                       ),
                     ),
                   ),
@@ -505,8 +522,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 ),
                 InkWell(
                   onTap: () {
-                  
-                 deleteEntry(context, widget.entry.key as int);
+                    deleteEntry(context, widget.entry.key as int);
                   },
                   child: Row(
                     children: [

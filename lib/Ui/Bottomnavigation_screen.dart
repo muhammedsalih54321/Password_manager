@@ -41,15 +41,15 @@ class _BottomnavigationScreenState extends State<BottomnavigationScreen> {
               unselectedItemColor: Color(0xFF616161),
               selectedLabelStyle: GoogleFonts.poppins(
                 color: Color(0xFF0A84FF),
-                fontSize: 12,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w400,
-                height: 0,
+               
               ),
               unselectedLabelStyle: GoogleFonts.poppins(
                   color: Color(0xFF616161),
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
-                  height: 0),
+                  ),
               currentIndex: currentindex,
               onTap: (index) {
                 setState(() {

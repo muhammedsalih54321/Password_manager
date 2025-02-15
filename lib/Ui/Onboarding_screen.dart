@@ -159,7 +159,7 @@ class _OnbordingState extends State<Onbording> {
       width: currentIndex == index ? 25.w : 10.w,
       margin: EdgeInsets.only(right: 5.w),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         color: Color(0xFF0A84FF),
       ),
     );

@@ -2,8 +2,8 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:password_manager/Components/Password_Container.dart';
 import 'package:password_manager/Provider/Provider_class.dart';
+import 'package:password_manager/Ui/Home/Details_screen.dart';
 import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -49,19 +49,18 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-
-   @override
+  @override
   Widget build(BuildContext context) {
     final passwordProvider = Provider.of<PasswordProvider>(context);
     final passwords = passwordProvider.passwords;
-    
+
     // Initialize the list with all passwords if empty
     if (filteredPasswords.isEmpty) {
       filteredPasswords = passwords;
     }
 
     return Scaffold(
-     backgroundColor: Colors.black,
+      backgroundColor: Colors.black,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.black,
@@ -86,7 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
           )
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60),
+          preferredSize: Size.fromHeight(60.h),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -107,7 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 hintText: 'Search Password',
                 hintStyle: GoogleFonts.poppins(
                   color: Color(0xFF7C7C7C),
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -126,14 +125,82 @@ class _SearchScreenState extends State<SearchScreen> {
               itemCount: filteredPasswords.length,
               itemBuilder: (context, index) {
                 final entry = filteredPasswords[index];
-                return PasswordContainer(
-                  image: entry.appIcon, // Assuming appIcon is the image path
-                  title: entry.appName,
-                  subtitle: entry.emailPhone, icon: '',
-                  
-                );
+                return ListTile(
+                  onTap: () {
+                         Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              DetailsScreen(entry: entry!),
+                        ));
+                      },
+                    leading: Container(
+                      width: 44.w,
+                      height: 44.h,
+                      decoration: BoxDecoration(
+                        color:
+                            Colors.grey[800], // Background color if image fails
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.r),
+                        child:
+                            entry.appIcon != null && entry!.appIcon.isNotEmpty
+                                ? Image.network(
+                                    entry.appIcon,
+                                    fit: BoxFit
+                                        .cover, // Ensures the image fills the container properly
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Center(
+                                        child: Text(
+                                          entry.appName.isNotEmpty
+                                              ? entry.appName[0].toUpperCase()
+                                              : '?',
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.white,
+                                            fontSize: 20.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Center(
+                                    child: Text(
+                                      entry?.appName.isNotEmpty == true
+                                          ? entry!.appName[0].toUpperCase()
+                                          : '?',
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white,
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                      ),
+                    ),
+                    title: Text(
+                      entry?.appName ?? '',
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 17.sp,
+                        fontWeight: FontWeight.w600,
+                        height: 1.29.h,
+                        letterSpacing: -0.40.sp,
+                      ),
+                    ),
+                    subtitle: Text(
+                      entry?.emailPhone ?? '',
+                      style: GoogleFonts.poppins(
+                        color: Color(0x99EBEBF5),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w400,
+                        height: 1.33.h,
+                        letterSpacing: -0.40.sp,
+                      ),
+                    ));
               },
             ),
     );
   }
-  }
+}

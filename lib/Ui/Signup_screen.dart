@@ -64,7 +64,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             color: Color(0xFFFAFAFA),
                             fontSize: 22.sp,
                             fontWeight: FontWeight.w600,
-                            height: 0.07,
+                            height: 0.07.h,
                           ),
                         ),
                         Text(
@@ -73,7 +73,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             color: Color(0xFF616161),
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w400,
-                            height: 4,
+                            height: 4.h,
                           ),
                         ),
                         SizedBox(
@@ -129,7 +129,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 color: Color(0xFF7C7C7C),
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w400,
-                                height: 0.10,
+                                height: 0.10.h,
                               ),
                               suffixIcon: IconButton(
                                   onPressed: () {
@@ -168,7 +168,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 color: Color(0xFF7C7C7C),
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
-                                height: 0.12,
+                                height: 0.12.h,
                               ),
                             )
                           ],
@@ -200,7 +200,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                         color: Colors.white,
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w500,
-                                        height: 0.10),
+                                        height: 0.10.h),
                                   ),
                                   SizedBox(
                                     width: 5.w,
