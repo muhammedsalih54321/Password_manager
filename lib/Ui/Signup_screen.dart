@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:password_manager/Ui/Bottomnavigation_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -90,7 +91,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   borderSide:
                                       BorderSide(color: Color(0xFF262626))),
                               focusedBorder: InputBorder.none,
-                              labelText: 'User Name',
+                              labelText: 'Email',
                               labelStyle: GoogleFonts.poppins(
                                 color: Color(0xFF7C7C7C),
                                 fontSize: 14.sp,
@@ -138,12 +139,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                   },
                                   icon: isobscure
                                       ? Icon(
-                                          BootstrapIcons.eye,
+                                          BootstrapIcons.eye_slash,
                                           color: Colors.white,
                                           size: 20.sp,
                                         )
                                       : Icon(
-                                          BootstrapIcons.eye_slash,
+                                          BootstrapIcons.eye,
                                           color: Colors.white,
                                           size: 20.sp,
                                         ))),
@@ -177,7 +178,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
+                            token(Username.text);
+                            Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (_) => BottomnavigationScreen()));
@@ -228,8 +230,8 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  // void token(String token) async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   prefs.setString('Token', token);
-  // }
+  void token(String token) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('Token', token);
+  }
 }

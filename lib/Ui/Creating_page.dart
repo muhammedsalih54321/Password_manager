@@ -1,11 +1,11 @@
 import 'package:bootstrap_icons/bootstrap_icons.dart';
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:password_manager/Components/Toast_message.dart';
-import 'package:password_manager/Components/generate_password.dart';
+import 'package:password_manager/Provider/Model_class.dart';
+import 'package:provider/provider.dart';
+
+import '../Provider/Provider_class.dart';
 
 class SearchBottomSheet extends StatefulWidget {
   const SearchBottomSheet({super.key});
@@ -17,10 +17,13 @@ class SearchBottomSheet extends StatefulWidget {
 class _SearchBottomSheetState extends State<SearchBottomSheet> {
   // List of items
   final search = TextEditingController();
-  final username = TextEditingController();
+  final appname = TextEditingController();
   final emailphoneno = TextEditingController();
   final password = TextEditingController();
-  final generatepasswords = TextEditingController();
+  String? selectedAppName;
+  String? selectedAppIcon;
+  bool iscreated = false;
+  String Dropdownvalue = 'Socials';
 
   final List<String> Appnames = [
     'Adobe',
@@ -84,7 +87,9 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     super.initState();
     // Initialize filteredAppnames with all items
     filteredAppnames = List.from(Appnames);
+    iscreated = false;
   }
+
 
   // Function to filter the list based on search query
   void _filterItems(String query) {
@@ -93,127 +98,32 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
           (item) => item.toLowerCase().contains(query.toLowerCase())).toList();
     });
   }
+    void _savePassword() {
+    if (selectedAppName == null || emailphoneno.text.isEmpty || password.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill in all details'))
+      );
+      return;
+    }
 
-  Future<void> _showMyDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Color.fromARGB(255, 40, 40, 40),
-          title: Text(
-            'Generate your Password',
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  controller: generatepasswords,
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    suffixIcon: InkWell(
-                      onTap: () {
-                        FlutterClipboard.copy(generatepasswords.text).then(
-                          (value) {
-                            ToastMessage().toastmessage(message: 'Copied');
-                          },
-                        );
-                      },
-                      child: Icon(
-                        BootstrapIcons.copy,
-                        color: Colors.white,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Color.fromARGB(255, 76, 75, 75),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                        borderSide: BorderSide(color: Color(0xFF262626))),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF262626)),
-                        borderRadius: BorderRadius.circular(8.r)),
-                  ),
-                  validator: (generatepaasword) {
-                    if (generatepaasword!.isEmpty) {
-                      return 'Enter a username!';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(
-                  height: 15.h,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'You want refresh',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 15.w,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        final passwords = generatepassword();
-                        generatepasswords.text = passwords;
-                      },
-                      child: Container(
-                        width: 40.w,
-                        height: 40.h,
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            BootstrapIcons.arrow_clockwise,
-                            color: Color(0xFF0A84FF),
-                            size: 30.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancle',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w500,
-                  )),
-              onPressed: () {
-                Navigator.of(context).pop();
-                generatepasswords.clear();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  final passwordData = PasswordEntry(
+  appName: selectedAppName==null?appname.text:selectedAppName!,
+  emailPhone: emailphoneno.text,
+  password: password.text,
+  category: Dropdownvalue,
+  appIcon: selectedAppIcon!,
+);
+
+    Provider.of<PasswordProvider>(context, listen: false).addPassword(passwordData);
+
+   //
+    Navigator.pop(context);
   }
 
   @override
   void dispose() {
     search.clear();
-    username.clear();
+    appname.clear();
     emailphoneno.clear();
     password.clear();
     super.dispose();
@@ -233,7 +143,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
             color: Color(0xFF111111),
           ),
           width: double.infinity.w,
-          height: 750.h,
+          height: iscreated ? 750.h : 700.h,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.r),
             child: SingleChildScrollView(
@@ -283,6 +193,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                         filled: true,
                         fillColor: Color(0xFF262626),
                         border: OutlineInputBorder(borderSide: BorderSide.none),
+                        enabledBorder:InputBorder.none ,
                         focusedBorder: InputBorder.none,
                         hintText: 'Search Password',
                         hintStyle: GoogleFonts.poppins(
@@ -297,20 +208,27 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                   SizedBox(height: 24.h),
                   Row(
                     children: [
-                      Container(
-                        width: 48.w,
-                        height: 48.h,
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.r),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            iscreated = !iscreated;
+                          });
+                        },
+                        child: Container(
+                          width: 48.w,
+                          height: 48.h,
+                          decoration: ShapeDecoration(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
                           ),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            BootstrapIcons.plus,
-                            color: Color(0xFF0A84FF),
-                            size: 30.sp,
+                          child: Center(
+                            child: Icon(
+                              BootstrapIcons.plus,
+                              color: Color(0xFF0A84FF),
+                              size: 30.sp,
+                            ),
                           ),
                         ),
                       ),
@@ -323,24 +241,34 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                           scrollDirection: Axis.horizontal,
                           itemCount: filteredAppnames.length,
                           itemBuilder: (context, index) {
+                             bool isSelected = selectedAppName == filteredAppnames[index];
                             return Padding(
                               padding: EdgeInsets.only(right: 12.w),
-                              child: Container(
-                                width: 112.w,
-                                height: 47.h,
-                                decoration: ShapeDecoration(
-                                  color: Color(0xFFEEF0F2),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.r),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    selectedAppName = filteredAppnames[index];
+                                    selectedAppIcon = Appicon[
+                                        Appnames.indexOf(selectedAppName!)];
+                                  });
+                                },
+                                child: Container(
+                                  width: 112.w,
+                                  height: 47.h,
+                                  decoration: ShapeDecoration(
+                                    color:isSelected?Color(0xFF0A84FF):Color(0xFFEEF0F2),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
                                   ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    filteredAppnames[index],
-                                    style: GoogleFonts.poppins(
-                                      color: Color(0xFF526578),
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w500,
+                                  child: Center(
+                                    child: Text(
+                                      filteredAppnames[index],
+                                      style: GoogleFonts.poppins(
+                                        color:isSelected?Colors.white: Color(0xFF526578),
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -351,64 +279,54 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 26.h),
+                  SizedBox(height: 20.h),
+                  iscreated == true
+                      ? TextFormField(
+                          textInputAction: TextInputAction.next,
+                          controller: appname,
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0xFF262626),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.r),
+                                borderSide:
+                                    BorderSide(color: Color(0xFF262626))),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Color(0xFF262626)),
+                                borderRadius: BorderRadius.circular(8.r)),
+                            hintText: 'Enter Appname/Sitename/Cardname',
+                            hintStyle: GoogleFonts.poppins(
+                              color: Color(0xFF7C7C7C),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                              height: 0.10,
+                            ),
+                          ),
+                          validator: (username) {
+                            if (username!.isEmpty) {
+                              return 'Enter a username!';
+                            }
+                            return null;
+                          },
+                        )
+                      : SizedBox(),
+                  SizedBox(
+                    height: 20.h,
+                  ),
                   Divider(
                     thickness: 1,
                     color: Color(0xFF262626),
                   ),
                   SizedBox(
-                    height: 24.h,
+                    height: 20.h,
                   ),
+
                   Row(
                     children: [
                       Text(
-                        'Username',
-                        style: GoogleFonts.poppins(
-                          color: Color(0xFF7C7C7C),
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  TextFormField(
-                    textInputAction: TextInputAction.next,
-                    controller: username,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Color(0xFF262626),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                          borderSide: BorderSide(color: Color(0xFF262626))),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF262626)),
-                          borderRadius: BorderRadius.circular(8.r)),
-                      hintText: 'Enter Username  ',
-                      hintStyle: GoogleFonts.poppins(
-                        color: Color(0xFF7C7C7C),
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        height: 0.10,
-                      ),
-                    ),
-                    validator: (username) {
-                      if (username!.isEmpty) {
-                        return 'Enter a username!';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(
-                    height: 24.h,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'Email/phone No',
+                        'Username/Email/phone No',
                         style: GoogleFonts.poppins(
                           color: Color(0xFF7C7C7C),
                           fontSize: 14.sp,
@@ -433,10 +351,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                       focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Color(0xFF262626)),
                           borderRadius: BorderRadius.circular(8.r)),
-                      hintText: 'Enter Email/Phone No  ',
+                      hintText: 'Enter Username/Email/Phone No  ',
                       hintStyle: GoogleFonts.poppins(
                         color: Color(0xFF7C7C7C),
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w400,
                         height: 0.10,
                       ),
@@ -449,7 +367,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                     },
                   ),
                   SizedBox(
-                    height: 24.h,
+                    height: 20.h,
                   ),
                   Row(
                     children: [
@@ -481,7 +399,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                       hintText: 'Enter password  ',
                       hintStyle: GoogleFonts.poppins(
                         color: Color(0xFF7C7C7C),
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w400,
                         height: 0.10,
                       ),
@@ -494,25 +412,21 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                     },
                   ),
                   SizedBox(
-                    height: 24.h,
+                    height: 25.h,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Generate your Password',
-                        style: TextStyle(
+                        'Select App Categories',
+                        style: GoogleFonts.poppins(
                           color: Color(0xFF7C7C7C),
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          _showMyDialog();
-                        },
-                        child: Container(
-                          width: 180.w,
+                      Container(
+                          width: 150.w,
                           height: 47.h,
                           decoration: ShapeDecoration(
                             color: Color(0xFFEEF0F2),
@@ -521,19 +435,57 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                             ),
                           ),
                           child: Center(
-                            child: Text(
-                              'Password Generator',
-                              style: GoogleFonts.poppins(
+                            child: DropdownButton<String>(
+                              value: Dropdownvalue,
+                              icon: Icon(
+                                Icons.keyboard_arrow_down_rounded,
                                 color: Colors.black,
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w500,
                               ),
+                              items: [
+                                DropdownMenuItem(
+                                  value: 'Socials',
+                                  child: Text(
+                                    'Socials',
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'Apps',
+                                  child: Text(
+                                    'Apps',
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'Wallets',
+                                  child: Text(
+                                    'Wallets',
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                )
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  Dropdownvalue = value!;
+                                });
+                              },
                             ),
-                          ),
-                        ),
-                      ),
+                          )),
                     ],
                   ),
+
                   SizedBox(
                     height: 50.h,
                   ),
@@ -542,10 +494,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          print('clicked');
+                          print(Dropdownvalue);
                           Navigator.pop(context);
                           search.clear();
-                          username.clear();
+                          appname.clear();
                           emailphoneno.clear();
                           password.clear();
                         },
@@ -578,31 +530,43 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                           ),
                         ),
                       ),
-                      Container(
-                        width: 160.w,
-                        height: 54.h,
-                        decoration: ShapeDecoration(
-                          color: Color(0xFF0A84FF),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100.r),
+                      InkWell(
+                        onTap: () {
+                         
+                          print(selectedAppIcon);
+                          print(selectedAppName);
+                           print(appname);
+                          print(emailphoneno);
+                           print(password);
+                          print(Dropdownvalue);
+                          _savePassword();
+                        },
+                        child: Container(
+                          width: 160.w,
+                          height: 54.h,
+                          decoration: ShapeDecoration(
+                            color: Color(0xFF0A84FF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100.r),
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0x3F3772FF),
+                                blurRadius: 30.r,
+                                offset: Offset(0, 16),
+                                spreadRadius: 0,
+                              )
+                            ],
                           ),
-                          shadows: [
-                            BoxShadow(
-                              color: Color(0x3F3772FF),
-                              blurRadius: 30.r,
-                              offset: Offset(0, 16),
-                              spreadRadius: 0,
-                            )
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            'SAVE',
-                            style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.5.sp),
+                          child: Center(
+                            child: Text(
+                              'SAVE',
+                              style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.5.sp),
+                            ),
                           ),
                         ),
                       ),
@@ -615,3 +579,6 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
         ));
   }
 }
+
+
+

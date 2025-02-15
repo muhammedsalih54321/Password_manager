@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PasswordContainer extends StatelessWidget {
+  final String icon;
   final String image;
   final String title;
   final String subtitle;
@@ -10,7 +11,8 @@ class PasswordContainer extends StatelessWidget {
       {super.key,
       required this.image,
       required this.title,
-      required this.subtitle});
+      required this.subtitle,
+      required this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class PasswordContainer extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.r),
             ),
           ),
+          child: Center(child: Text(icon),),
         ),
         title: Text(
           title,

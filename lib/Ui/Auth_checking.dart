@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:password_manager/Ui/Signup_screen.dart';
-
+import 'package:password_manager/Ui/Bottomnavigation_screen.dart';
 
 class Authchecking extends StatefulWidget {
   const Authchecking({super.key});
@@ -14,31 +15,7 @@ class Authchecking extends StatefulWidget {
 
 class _AuthcheckingState extends State<Authchecking> {
   final LocalAuthentication auth = LocalAuthentication();
-  bool isauthenticate=false;
-  
-
-  Authbutton()async{
-   if (!isauthenticate) {
-   try {
-      final bool canauthenticateWithBiometrics =await auth.canCheckBiometrics;
-    if (canauthenticateWithBiometrics) {
-      final bool didauthenticate= await auth.authenticate(localizedReason: 'Please Authenticate open your App',options: AuthenticationOptions(biometricOnly: true));
-       setState(() {
-      isauthenticate=didauthenticate;
-    });
-    }
-      Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => SignupScreen()));
-   } catch (e) {
-     print(e);
-   }
-   }else{
-    setState(() {
-      isauthenticate=false;
-    });
-   }
-  }
-
+  bool isauthenticate = false;
   checkAuth() async {
     bool isAvailable;
     isAvailable = await auth.canCheckBiometrics;
@@ -48,34 +25,70 @@ class _AuthcheckingState extends State<Authchecking> {
           localizedReason: 'Scan your fingerprint to proceed',
           options: AuthenticationOptions(biometricOnly: true));
       if (result) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignupScreen()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => BottomnavigationScreen()));
       } else {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Error Occured'),
-              content: Text(
-                  'Permission Denied'), // Format total price with two decimal places
+              backgroundColor: Color.fromARGB(255, 40, 40, 40),
+              title: Column(
+                children: [
+                  Icon(
+                    Icons.lock_outline_rounded,
+                    color: Color(0xFF0A84FF),
+                    size: 30.sp,
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Text(
+                    textAlign: TextAlign.center,
+                    'Password Manager is Locked',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 25.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              content: Text('For Your security Please unlock The app and Use',
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
+                  )), // Format total price with two decimal places
               actions: [
                 TextButton(
                   onPressed: () {
                     if (Platform.isAndroid) {
                       SystemNavigator.pop();
-                    }else{
+                    } else {
                       exit(0);
                     }
-                   
                   },
-                  child: Text('Close'),
+                  child: Text('Close',
+                      style: GoogleFonts.poppins(
+                        color: Color(0xFF0A84FF),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                      )),
                 ),
-                 TextButton(
+                TextButton(
                   onPressed: () {
                     Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Authchecking()));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Authchecking()));
                   },
-                  child: Text('unlouck'),
+                  child: Text('Unlock',
+                      style: GoogleFonts.poppins(
+                        color: Color(0xFF0A84FF),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                      )),
                 ),
               ],
             );
@@ -86,16 +99,17 @@ class _AuthcheckingState extends State<Authchecking> {
       print("No biometric detected");
     }
   }
-@override
+
+  @override
   void initState() {
-checkAuth();
+    checkAuth();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor: Colors.black,
-    
+      backgroundColor: Colors.black,
     );
   }
 }
