@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:password_manager/Ui/Auth_checking.dart';
 import 'package:password_manager/Ui/Onboarding_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,6 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      body: Center(child: Image.asset('assets/images/img.png',height: 500.h,width: 500.w,fit: BoxFit.cover,),),
     );
   }
 }
