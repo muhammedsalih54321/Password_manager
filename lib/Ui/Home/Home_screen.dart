@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:password_manager/Components/category_container.dart';
+import 'package:password_manager/Components/generate_password.dart';
 import 'package:password_manager/Provider/Model_class.dart';
 import 'package:password_manager/Ui/Home/Details_screen.dart';
 
@@ -23,7 +24,41 @@ class _HomeScreenState extends State<HomeScreen> {
     passwordBox = Hive.box<PasswordEntry>('passwordBox');
   }
 
-  
+  final generatepasswords = TextEditingController();
+  Future<void> _Generatepassword() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color.fromARGB(255, 40, 40, 40),
+          title: Text(
+            'Generate your Password',
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          content: Generate(),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancle',
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
+                  )),
+              onPressed: () {
+                Navigator.of(context).pop();
+                generatepasswords.clear();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.black,
         title: Text(
-          'Password manager',
+          'PassGuard',
           style: GoogleFonts.poppins(
             color: Colors.white,
             fontSize: 25.sp,
@@ -47,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.only(right: 10.w),
             child: InkWell(
               onTap: () {
-              
+              _Generatepassword();
               },
               child: Icon(
                 BootstrapIcons.plus_circle,

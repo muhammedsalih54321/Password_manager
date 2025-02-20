@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -22,6 +23,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.init(directory.path);
 
+
   // ✅ Register the adapter
   Hive.registerAdapter(PasswordEntryAdapter());
   print("Hive Storage Path: ${directory.path}");
@@ -35,6 +37,8 @@ void main() async {
       child: MyApp(),
     ),
   );
+
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 }
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -47,6 +51,7 @@ class MyApp extends StatelessWidget {
         builder: (BuildContext context, Widget? child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
+            
             title: 'Flutter Demo',
             theme: ThemeData(
               splashColor: Colors.transparent),

@@ -2,6 +2,7 @@ import 'package:bootstrap_icons/bootstrap_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:password_manager/Components/generate_password.dart';
 import 'package:password_manager/Provider/Provider_class.dart';
 import 'package:password_manager/Ui/Home/Details_screen.dart';
 import 'package:provider/provider.dart';
@@ -41,6 +42,41 @@ class _SearchScreenState extends State<SearchScreen> {
       }
     });
   }
+  final generatepasswords = TextEditingController();
+  Future<void> _Generatepassword() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color.fromARGB(255, 40, 40, 40),
+          title: Text(
+            'Generate your Password',
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          content: Generate(),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancle',
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
+                  )),
+              onPressed: () {
+                Navigator.of(context).pop();
+                generatepasswords.clear();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -65,7 +101,7 @@ class _SearchScreenState extends State<SearchScreen> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.black,
         title: Text(
-          'Password manager',
+            'PassGuard',
           style: GoogleFonts.poppins(
             color: Colors.white,
             fontSize: 25.sp,
@@ -77,10 +113,15 @@ class _SearchScreenState extends State<SearchScreen> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10.w),
-            child: Icon(
-              BootstrapIcons.plus_circle,
-              color: Color(0xFF0A84FF),
-              size: 24.sp,
+            child: InkWell(
+              onTap: () {
+                _Generatepassword();
+              },
+              child: Icon(
+                BootstrapIcons.plus_circle,
+                color: Color(0xFF0A84FF),
+                size: 24.sp,
+              ),
             ),
           )
         ],
